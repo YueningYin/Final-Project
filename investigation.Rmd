@@ -55,6 +55,30 @@ sum(is.na(crime_data))
 # Number of missing values in each variable
 colSums(is.na(crime_data))
 ```
+```{r}
+## Stage 3 select relevant variables
+crime_selected <- crime_data[, c(128, 34, 38, 37, 80)]
+colnames(crime_selected) <- c(
+  "ViolentCrime",
+  "Poverty",
+  "Unemployment",
+  "Education",
+  "Housing"
+)
+
+head(crime_selected)
+dim(crime_selected)
+
+# Missing values in selected variables
+colSums(is.na(crime_selected))
+
+summary(crime_selected)
+```
+
+
+
+
+
 
 
 

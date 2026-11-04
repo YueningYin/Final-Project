@@ -420,6 +420,45 @@ colSums(is.na(crime_data))</code></pre>
 ##    0    0    0    0    0 1675 1675 1675 1675 1675 1675 1675 1675 1675 1675 1675 
 ## V113 V114 V115 V116 V117 V118 V119 V120 V121 V122 V123 V124 V125 V126 V127 V128 
 ## 1675 1675 1675 1675 1675 1675    0    0    0 1675 1675 1675 1675    0 1675    0</code></pre>
+<pre class="r"><code>## Stage 3 select relevant variables
+crime_selected &lt;- crime_data[, c(128, 34, 38, 37, 80)]
+colnames(crime_selected) &lt;- c(
+  &quot;ViolentCrime&quot;,
+  &quot;Poverty&quot;,
+  &quot;Unemployment&quot;,
+  &quot;Education&quot;,
+  &quot;Housing&quot;
+)
+
+head(crime_selected)</code></pre>
+<pre><code>##   ViolentCrime Poverty Unemployment Education Housing
+## 1         0.20    0.19         0.27      0.48    0.05
+## 2         0.67    0.24         0.27      0.30    0.02
+## 3         0.43    0.27         0.36      0.19    0.29
+## 4         0.12    0.10         0.33      0.31    0.60
+## 5         0.03    0.06         0.12      0.33    0.04
+## 6         0.14    0.12         0.10      0.80    0.16</code></pre>
+<pre class="r"><code>dim(crime_selected)</code></pre>
+<pre><code>## [1] 1994    5</code></pre>
+<pre class="r"><code># Missing values in selected variables
+colSums(is.na(crime_selected))</code></pre>
+<pre><code>## ViolentCrime      Poverty Unemployment    Education      Housing 
+##            0            0            0            0            0</code></pre>
+<pre class="r"><code>summary(crime_selected)</code></pre>
+<pre><code>##   ViolentCrime      Poverty       Unemployment      Education     
+##  Min.   :0.000   Min.   :0.000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.070   1st Qu.:0.110   1st Qu.:0.2200   1st Qu.:0.2100  
+##  Median :0.150   Median :0.250   Median :0.3200   Median :0.3100  
+##  Mean   :0.238   Mean   :0.303   Mean   :0.3635   Mean   :0.3617  
+##  3rd Qu.:0.330   3rd Qu.:0.450   3rd Qu.:0.4800   3rd Qu.:0.4600  
+##  Max.   :1.000   Max.   :1.000   Max.   :1.0000   Max.   :1.0000  
+##     Housing      
+##  Min.   :0.0000  
+##  1st Qu.:0.0600  
+##  Median :0.1300  
+##  Mean   :0.2045  
+##  3rd Qu.:0.2700  
+##  Max.   :1.0000</code></pre>
 
 
 
