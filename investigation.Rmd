@@ -48,6 +48,13 @@ head(crime_data[, 1:10])
 table(sapply(crime_data, class))
 ```
 
+```{r}
+## Stage2 Investigate missing values
+# Total number of missing values
+sum(is.na(crime_data))
+# Number of missing values in each variable
+colSums(is.na(crime_data))
+```
 
 
 
