@@ -373,11 +373,31 @@ crime_data &lt;- read.csv(
   header = FALSE,
   na.strings = &quot;?&quot;,
   stringsAsFactors = FALSE
-)
-
-# Check the dimensions
+)</code></pre>
+<pre class="r"><code>## Stage1  Dataset Structure
+# Dataset dimensions
 dim(crime_data)</code></pre>
 <pre><code>## [1] 1994  128</code></pre>
+<pre class="r"><code># Number of observations
+nrow(crime_data)</code></pre>
+<pre><code>## [1] 1994</code></pre>
+<pre class="r"><code># Number of variables
+ncol(crime_data)</code></pre>
+<pre><code>## [1] 128</code></pre>
+<pre class="r"><code># First six observations
+head(crime_data[, 1:10])</code></pre>
+<pre><code>##   V1 V2    V3                  V4 V5   V6   V7   V8   V9  V10
+## 1  8 NA    NA        Lakewoodcity  1 0.19 0.33 0.02 0.90 0.12
+## 2 53 NA    NA         Tukwilacity  1 0.00 0.16 0.12 0.74 0.45
+## 3 24 NA    NA        Aberdeentown  1 0.00 0.42 0.49 0.56 0.17
+## 4 34  5 81440 Willingborotownship  1 0.04 0.77 1.00 0.08 0.12
+## 5 42 95  6096   Bethlehemtownship  1 0.01 0.55 0.02 0.95 0.09
+## 6  6 NA    NA   SouthPasadenacity  1 0.02 0.28 0.06 0.54 1.00</code></pre>
+<pre class="r"><code># Variable types
+table(sapply(crime_data, class))</code></pre>
+<pre><code>## 
+## character   integer   numeric 
+##         1         4       123</code></pre>
 
 
 

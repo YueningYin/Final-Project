@@ -18,10 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 # Add any other libraries here
 
-
-
 ```
-
 
 ```{r load-data}
 # load your data 
@@ -31,10 +28,27 @@ crime_data <- read.csv(
   na.strings = "?",
   stringsAsFactors = FALSE
 )
+```
 
-# Check the dimensions
+```{r}
+## Stage1  Dataset Structure
+# Dataset dimensions
 dim(crime_data)
 
+# Number of observations
+nrow(crime_data)
+
+# Number of variables
+ncol(crime_data)
+
+# First six observations
+head(crime_data[, 1:10])
+
+# Variable types
+table(sapply(crime_data, class))
 ```
+
+
+
 
 
