@@ -57,7 +57,7 @@ colSums(is.na(crime_data))
 ```
 ```{r}
 ## Stage 3 select relevant variables
-crime_selected <- crime_data[, c(128, 34, 18, 38, 37, 80)]
+crime_selected <- crime_data[, c(128, 35, 18, 39, 38, 81)]
 colnames(crime_selected) <- c(
   "ViolentCrime",
   "Poverty",
@@ -75,7 +75,23 @@ colSums(is.na(crime_selected))
 
 summary(crime_selected)
 ```
+```{r}
+## Stage4 Data Visualisation
 
+library(tidyverse)
+
+# Distribution of violent crime rates
+ggplot(data = crime_selected,
+       mapping = aes(x = ViolentCrime)) + 
+  geom_histogram(binwidth = 0.05) +
+  labs(
+    title = "Distribution of violent crime rates",
+    x = "Normalised violent crime rate",
+    y = "Number of communities"
+  )
+
+```
+this histogram shows a positively skewed distribution of normalised violent crime rates. Most communities have relatively low crime rate values, with the highest concentration occurring around 0.05. The frequency decreases as crime values increase. There are also some observations with particularly high crime values near 1. This suggests that there is variation in violent crime rates across communities, which we aim to investigate using socioeconomic variables.
 
 
 
