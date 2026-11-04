@@ -57,10 +57,11 @@ colSums(is.na(crime_data))
 ```
 ```{r}
 ## Stage 3 select relevant variables
-crime_selected <- crime_data[, c(128, 34, 38, 37, 80)]
+crime_selected <- crime_data[, c(128, 34, 18, 38, 37, 80)]
 colnames(crime_selected) <- c(
   "ViolentCrime",
   "Poverty",
+  "MedianHouseholdIncome",
   "Unemployment",
   "Education",
   "Housing"
