@@ -25,9 +25,15 @@ library(tidyverse)
 
 ```{r load-data}
 # load your data 
+crime_data <- read.csv(
+  "data/communities.data",
+  header = FALSE,
+  na.strings = "?",
+  stringsAsFactors = FALSE
+)
 
-
-
+# Check the dimensions
+dim(crime_data)
 
 ```
 
