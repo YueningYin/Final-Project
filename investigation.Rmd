@@ -57,8 +57,9 @@ colSums(is.na(crime_data))
 ```
 ```{r}
 ## Stage 3 select relevant variables
-crime_selected <- crime_data[, c(128, 35, 18, 39, 38, 81)]
+crime_selected <- crime_data[, c(4, 128, 35, 18, 39, 38, 81)]
 colnames(crime_selected) <- c(
+  "Community",
   "ViolentCrime",
   "Poverty",
   "MedianHouseholdIncome",
@@ -95,8 +96,64 @@ this histogram shows a positively skewed distribution of normalised violent crim
 
 
 
+```{r}
 
+ggplot(data = crime_selected,
+       mapping = aes(x = Education,
+                    
+                    )) +
+  geom_histogram(binwidth = 0.05) +
+  labs( title = "level of education vs violent crime",
+        x = "Education",
+        y = "Violent crime"
+        )
+```
 
+```{r}
+ggplot(data = crime_selected,
+       mapping = aes(x = Poverty,
+                    
+                    )) +
+  geom_histogram(binwidth = 0.05) +
+  labs( title = "Poverty vs violent crime",
+        x = "Poverty",
+        y = "Violent crime"
+        )
+```
 
+```{r}
+ggplot(data = crime_selected,
+       mapping = aes(x = MedianHouseholdIncome,
+                    
+                    )) +
+  geom_histogram(binwidth = 0.05) +
+  labs( title = "Incomce vs violent crime",
+        x = "Income",
+        y = "Violent crime"
+        )
+```
 
+```{r}
+ggplot(data = crime_selected,
+       mapping = aes(x = Unemployment,
+                    
+                    )) +
+  geom_histogram(binwidth = 0.05) +
+  labs( title = "Unemployment vs violent crime",
+        x = "Unemployment",
+        y = "Violent crime"
+        )
+```
+
+```{r}
+ggplot(data = crime_selected,
+       mapping = aes(x = Housing,
+                    
+                    )) +
+  geom_histogram(binwidth = 0.05) +
+  labs( title = "Housing vs violent crime",
+        x = "Housing",
+        y = "Violent crime"
+        )
+```
 
