@@ -89,7 +89,17 @@ knitr::kable(
 ```
 ```{r}
 ## Stage1.3 select relevant variables
-crime_selected <- crime_data[, c(4, 128, 35, 18, 39, 38, 81)]
+crime_selected <- crime_data %>%
+  select(
+    communityname,
+    ViolentCrimesPerPop,
+    PctPopUnderPov,
+    medIncome,
+    PctUnemployed,
+    PctBSorMore,
+    PctVacMore6Mos
+  )
+
 colnames(crime_selected) <- c(
   "Community",
   "ViolentCrime",
@@ -97,15 +107,28 @@ colnames(crime_selected) <- c(
   "MedianHouseholdIncome",
   "Unemployment",
   "Education",
-  "Housing"
+  "LongTermVacancy"
 )
 
-head(crime_selected)
 dim(crime_selected)
+str(crime_selected)
 
-# Missing values in selected variables
-colSums(is.na(crime_selected))
+head(crime_selected)
 
+missing_summary <- data.frame(
+  Variable = names(crime_selected),
+  MissingValues = colSums(is.na(crime_selected)),
+  MissingPercentage = round(
+    colMeans(is.na(crime_selected)) * 100, 2
+  )
+)
+
+knitr::kable(
+  missing_summary,
+  caption = "Missing Values in Selected Variables"
+)
+
+sum(is.na(crime_selected))
 summary(crime_selected)
 ```
 ```{r}
@@ -128,65 +151,70 @@ this histogram shows a positively skewed distribution of normalised violent crim
 
 
 
-```{r}
-
+```{r,message=FALSE}
 ggplot(data = crime_selected,
-       mapping = aes(x = Education,
-                    
-                    )) +
-  geom_histogram(binwidth = 0.05) +
-  labs( title = "level of education vs violent crime",
-        x = "Education",
-        y = "Violent crime"
-        )
+       aes(x = Education, y = ViolentCrime)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Education and Violent Crime",
+    x = "Educational Attainment",
+    y = "Violent Crime Rate"
+  ) +
+  theme_minimal()
 ```
 
-```{r}
+```{r,message=FALSE}
 ggplot(data = crime_selected,
-       mapping = aes(x = Poverty,
-                    
-                    )) +
-  geom_histogram(binwidth = 0.05) +
-  labs( title = "Poverty vs violent crime",
-        x = "Poverty",
-        y = "Violent crime"
-        )
+       aes(x = Poverty, y = ViolentCrime)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Poverty and Violent Crime",
+    x = "Poverty Level",
+    y = "Violent Crime Rate"
+  ) +
+  theme_minimal()
 ```
 
-```{r}
+```{r,message=FALSE}
 ggplot(data = crime_selected,
-       mapping = aes(x = MedianHouseholdIncome,
-                    
-                    )) +
-  geom_histogram(binwidth = 0.05) +
-  labs( title = "Incomce vs violent crime",
-        x = "Income",
-        y = "Violent crime"
-        )
+       aes(x = MedianHouseholdIncome, y = ViolentCrime)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Household Income and Violent Crime",
+    x = "Median Household Income",
+    y = "Violent Crime Rate"
+  ) +
+  theme_minimal()
+
 ```
 
-```{r}
+```{r,message=FALSE}
 ggplot(data = crime_selected,
-       mapping = aes(x = Unemployment,
-                    
-                    )) +
-  geom_histogram(binwidth = 0.05) +
-  labs( title = "Unemployment vs violent crime",
-        x = "Unemployment",
-        y = "Violent crime"
-        )
+       aes(x = Unemployment, y = ViolentCrime)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Unemployment and Violent Crime",
+    x = "Unemployment Level",
+    y = "Violent Crime Rate"
+  ) +
+  theme_minimal()
 ```
 
-```{r}
+```{r,message=FALSE}
 ggplot(data = crime_selected,
-       mapping = aes(x = Housing,
-                    
-                    )) +
-  geom_histogram(binwidth = 0.05) +
-  labs( title = "Housing vs violent crime",
-        x = "Housing",
-        y = "Violent crime"
-        )
+       aes(x = LongTermVacancy, y = ViolentCrime)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "LongTermVacancy and Violent Crime",
+    x = "LongTermVacancy",
+    y = "Violent Crime Rate"
+  ) +
+  theme_minimal()
 ```
 
 ```{r}
