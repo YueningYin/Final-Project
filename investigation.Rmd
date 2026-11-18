@@ -17,7 +17,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r load-lib, message = FALSE}
 library(tidyverse)
 # Add any other libraries here
-
 ```
 
 ```{r load-data}
@@ -28,11 +27,21 @@ crime_data <- read.csv(
   na.strings = "?",
   stringsAsFactors = FALSE
 )
+
+name_lines <- readLines("data/communities.names")
+attribute_lines <- grep("@attribute", name_lines, value = TRUE)
+
+variable_names <- sub("@attribute ", "", attribute_lines)
+variable_names <- sub(" .*", "", variable_names)
+
+length(variable_names)
+
+colnames(crime_data) <- variable_names
 ```
 
 ```{r}
 ## Stage1.1  Dataset Structure
-# Dataset dimensions
+# Overall dimensions
 dim(crime_data)
 
 # Number of observations
@@ -41,19 +50,42 @@ nrow(crime_data)
 # Number of variables
 ncol(crime_data)
 
-# First six observations
-head(crime_data[, 1:10])
+# Names of all variables
+names(crime_data)
 
-# Variable types
-table(sapply(crime_data, class))
+# Types of variables
+variable_types <- table(sapply(crime_data, class))
+
+knitr::kable(
+  as.data.frame(variable_types),
+  col.names = c("Variable Type", "Number of Variables"),
+  caption = "Types of Variables in the Dataset"
+)
+
+#  Preview of the first six observations
+knitr::kable(
+  head(crime_data[, 1:10]),
+  caption = "First Six Observations (First Ten Variables)"
+)
 ```
 
 ```{r}
 ## Stage1.2 Investigate missing values
 # Total number of missing values
 sum(is.na(crime_data))
+
 # Number of missing values in each variable
-colSums(is.na(crime_data))
+missing_values <- colSums(is.na(crime_data))
+
+missing_table <- data.frame(
+  Variable = names(missing_values),
+  MissingValues = as.numeric(missing_values)
+)
+
+knitr::kable(
+  missing_table,
+  caption = "Missing Values in Each Variable"
+)
 ```
 ```{r}
 ## Stage1.3 select relevant variables
