@@ -233,7 +233,83 @@ descriptive_stats <- data.frame(
 
 descriptive_stats
 ```
+
 ```{r}
+## Stage 3.2 Correlation Analysis
+cor_matrix <- cor(
+  eda_data,
+  use = "pairwise.complete.obs",
+  method = "pearson"
+)
+
+round(cor_matrix, 2)
+
+```
+```{r}
+## Stage 3.3 Correlation Heatmap
+
+cor_data <- as.data.frame(as.table(cor_matrix))
+
+ggplot(cor_data,
+       aes(x = Var1, y = Var2, fill = Freq)) +
+  geom_tile() +
+  geom_text(aes(label = round(Freq, 2)), size = 3) +
+  scale_fill_gradient2(
+    low = "blue",
+    mid = "white",
+    high = "red",
+    midpoint = 0,
+    limits = c(-1, 1)
+  ) +
+  labs(
+    title = "Correlation Heatmap",
+    x = NULL,
+    y = NULL,
+    fill = "Correlation"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+Poverty (r = 0.52) and unemployment (r = 0.50) have the strongest positive correlations with violent crime, suggesting that communities with higher levels of poverty and unemployment tend to have higher crime rates. On the other hand, median household income (r = -0.42) and education (r = -0.31) have negative correlations, meaning that communities with higher incomes and education levels generally have lower crime rates. Long-term housing vacancy (r = 0.02) shows almost no correlation with violent crime.
+
+We also found that some socioeconomic factors are strongly related to each other. For example, poverty is negatively correlated with income (r = -0.79) but positively correlated with unemployment (r = 0.78). This could lead to multicollinearity when we carry out regression analysis, as some variables may be explaining similar patterns in the data.
+```{r}
+## Stage 3.4 Correlation bar chart 
+
+# Extract correlations with violent crime
+crime_correlations <- cor_matrix["ViolentCrime", ]
+
+# Remove violent crime's correlation with itself
+crime_correlations <- crime_correlations[
+  names(crime_correlations) != "ViolentCrime"
+]
+
+# Convert into a data frame
+cor_df <- data.frame(
+  Variable = names(crime_correlations),
+  Correlation = as.numeric(crime_correlations)
+)
+
+# Create bar chart
+ggplot(cor_df,
+       aes(x = reorder(Variable, -Correlation),
+           y = Correlation)) +
+  geom_col(fill = "#F28DBB", width = 0.7) +
+  geom_text(
+    aes(label = sprintf("%.2f", Correlation)),
+    vjust = ifelse(cor_df$Correlation >= 0, -0.5, 1.5),
+    size = 4
+  ) +
+  geom_hline(yintercept = 0, colour = "grey40") +
+  scale_y_continuous(limits = c(-0.6, 0.65)) +
+  labs(
+    title = "Correlation with Violent Crime",
+    x = NULL,
+    y = "Pearson Correlation Coefficient"
+  ) +
+  theme_minimal()
 
 ```
 
