@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r load-lib, message = FALSE}
 library(tidyverse)
+library(tidymodels)
 # Add any other libraries here
 ```
 
@@ -318,6 +319,7 @@ model1 <- lm(ViolentCrime ~ Poverty + MedianHouseholdIncome + Unemployment, data
 
 summary(model1)
 ```
+
 
 ```{r}
 linear_reg() %>%
