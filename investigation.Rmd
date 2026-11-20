@@ -315,9 +315,9 @@ ggplot(cor_df,
 ```
 ```{r}
 ## Stage4 Modeling Data
-model1 <- lm(ViolentCrime ~ Poverty + MedianHouseholdIncome + Unemployment, data = crime_selected)
+model_1 <- lm(ViolentCrime ~ Poverty + MedianHouseholdIncome + Unemployment, data = crime_selected)
 
-summary(model1)
+summary(model_1)
 ```
 
 
@@ -327,5 +327,26 @@ linear_reg() %>%
   fit(ViolentCrime ~ Poverty + MedianHouseholdIncome + Unemployment, data = crime_selected) %>%
   tidy()
 ```
+```{r}
+model_2 <- lm(ViolentCrime ~ Poverty + MedianHouseholdIncome + Unemployment + Education + LongTermVacancy, data = crime_selected)
+
+summary(model_2)
+```
+```{r}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(ViolentCrime ~ Poverty + MedianHouseholdIncome + Unemployment + Education + LongTermVacancy, data = crime_selected) %>%
+  tidy()
+```
+```{r}
+model_3 <- lm(ViolentCrime ~ Poverty + MedianHouseholdIncome + Unemployment + Education + LongTermVacancy + Community, data = crime_selected)
+
+summary(model_3)
 ```
 
+```{r}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(ViolentCrime ~ Poverty + MedianHouseholdIncome + Unemployment + Education + LongTermVacancy + Community, data = crime_selected) %>%
+  tidy()
+```
