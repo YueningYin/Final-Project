@@ -1533,17 +1533,18 @@ knitr::kable(
 </tr>
 </tbody>
 </table>
-<p>In the full model, Poverty (β = 0.429, p &lt; 0.001) and Unemployment
-(β = 0.245, p &lt; 0.001) were positively associated with violent crime,
-holding the other variables constant. MedianHouseholdIncome also had a
-positive coefficient (β = 0.118, p = 0.011), although its bivariate
-correlation with violent crime was negative. Education (β = −0.145, p
-&lt; 0.001) and LongTermVacancy (β = −0.171, p &lt; 0.001) had negative
+<p>Holding the other variables constant, Poverty (β = 0.429, p &lt;
+0.001) and Unemployment (β = 0.245, p &lt; 0.001) were positively
+associated with violent crime. MedianHouseholdIncome also had a positive
+coefficient (β = 0.118, p = 0.011). Education (β = −0.145, p &lt; 0.001)
+and LongTermVacancy (β = −0.171, p &lt; 0.001) had negative
 coefficients. All five predictors were statistically significant at the
-5% level. The change in direction for income, and the near-zero
-bivariate correlation for long-term vacancy, suggest that their adjusted
-associations should be interpreted cautiously. These results show
-associations, not causal effects.</p>
+5% level. The income coefficient has a different direction from its
+bivariate association with violent crime. LongTermVacancy also had a
+near-zero bivariate correlation but a negative coefficient in the full
+model. These differences suggest that the adjusted coefficients should
+be interpreted cautiously. The results describe associations, not causal
+effects.</p>
 </div>
 <div id="model-evaluation" class="section level3">
 <h3>4.3 Model Evaluation</h3>
@@ -1576,6 +1577,10 @@ knitr::kable(
 </tr>
 </tbody>
 </table>
+<p>The model accounted for approximately 32.0% of the variation in
+violent crime rates (R² = 0.320; adjusted R² = 0.318). This describes
+how well the model fits the data used in the analysis; it is not a
+prediction accuracy score for new communities.</p>
 <pre class="r"><code>residual_data &lt;- data.frame(
   Fitted = fitted(final_model),
   Residuals = residuals(final_model)
@@ -1598,13 +1603,13 @@ interpreted with caution in this range.</p>
 </div>
 <div id="limitations-and-possible-improvements" class="section level3">
 <h3>4.4 Limitations and Possible Improvements</h3>
-<p>The residual plot suggests that the model may not meet the
-constant-variance assumption equally well across the range of fitted
-values. A future analysis could investigate whether a different model
-specification improves this pattern. The outcome and predictors are
-measured at community level, so the results cannot be assumed to
-describe individuals. The analysis also identifies associations rather
-than causal effects.</p>
+<p>The residual plot suggests that the constant-variance assumption may
+not hold equally well across the range of fitted values. A future
+analysis could investigate whether a different model specification
+improves this pattern. Since the data describe communities rather than
+individuals, the results should not be used to make claims about
+individual people or to label particular communities. The analysis
+identifies associations and does not establish causation.</p>
 </div>
 </div>
 
