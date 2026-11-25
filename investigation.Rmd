@@ -218,6 +218,7 @@ ggplot(data = crime_selected,
   theme_minimal()
 ```
 
+
 ```{r}
 ## Stage3.1  Descriptive Statistics
 eda_data <- crime_selected %>%
@@ -313,19 +314,68 @@ ggplot(cor_df,
   theme_minimal()
 
 ```
+
+
+# Stage4 Modeling Data
+### 4.1 Model Selection
+ViolentCrime is a continuous outcome, and this investigation examines how several socioeconomic variables are associated with it simultaneously. So we select Multiple linear regression  as the main modelling method. The model will include Poverty, MedianHouseholdIncome, Unemployment, Education and LongTermVacancy. Model fit and residuals will be examined to assess whether this method provides a reasonable summary of the relationships in the data.
+
+
+### 4.2 Model Fitting and Results
 ```{r}
-## Stage4 Modeling Data
-model1 <- lm(ViolentCrime ~ Poverty + MedianHouseholdIncome + Unemployment, data = crime_selected)
+final_model <- lm(
+  ViolentCrime ~ Poverty + MedianHouseholdIncome +
+    Unemployment + Education + LongTermVacancy,
+  data = crime_selected
+)
 
-summary(model1)
+model_summary <- summary(final_model)
+
+knitr::kable(
+  model_summary$coefficients,
+  digits = 3,
+  col.names = c("Estimate", "Std. Error", "t value", "p-value"),
+  caption = "Multiple linear regression results"
+)
 ```
+In the full model, Poverty (β = 0.429, p < 0.001) and Unemployment (β = 0.245, p < 0.001) were positively associated with violent crime, holding the other variables constant. MedianHouseholdIncome also had a positive coefficient (β = 0.118, p = 0.011), although its bivariate correlation with violent crime was negative. Education (β = −0.145, p < 0.001) and LongTermVacancy (β = −0.171, p < 0.001) had negative coefficients. All five predictors were statistically significant at the 5% level. The change in direction for income, and the near-zero bivariate correlation for long-term vacancy, suggest that their adjusted associations should be interpreted cautiously. These results show associations, not causal effects.
 
 
+### 4.3 Model Evaluation
 ```{r}
-linear_reg() %>%
-  set_engine("lm") %>%
-  fit(ViolentCrime ~ Poverty + MedianHouseholdIncome + Unemployment, data = crime_selected) %>%
-  tidy()
-```
+model_fit <- data.frame(
+  R_squared = model_summary$r.squared,
+  Adjusted_R_squared = model_summary$adj.r.squared,
+  Residual_SE = model_summary$sigma
+)
+
+knitr::kable(
+  model_fit,
+  digits = 3,
+  col.names = c("R-squared", "Adjusted R-squared", "Residual standard error"),
+  caption = "Model fit"
+)
+
+residual_data <- data.frame(
+  Fitted = fitted(final_model),
+  Residuals = residuals(final_model)
+)
+
+ggplot(residual_data, aes(x = Fitted, y = Residuals)) +
+  geom_point(alpha = 0.4, colour = "lightblue") +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "red") +
+  labs(
+    title = "The regression model",
+    x = "Fitted violent crime rate",
+    y = "Residual"
+  ) +
+  theme_minimal()
+
 ```
 
+The residuals become more spread out at higher fitted values, suggesting that the model errors may be less consistent for communities with higher predicted crime rates. The model should therefore be interpreted with caution in this range.
+
+
+
+### 4.4 Limitations and Possible Improvements
+The residual plot suggests that the model may not meet the constant-variance assumption equally well across the range of fitted values. A future analysis could investigate whether a different model specification improves this pattern. The outcome and predictors are measured at community level, so the results cannot be assumed to describe individuals. The analysis also identifies associations rather than causal effects.
