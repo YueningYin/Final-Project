@@ -247,36 +247,8 @@ cor_matrix <- cor(
 round(cor_matrix, 2)
 
 ```
-```{r}
-## Stage 3.3 Correlation Heatmap
 
-cor_data <- as.data.frame(as.table(cor_matrix))
 
-ggplot(cor_data,
-       aes(x = Var1, y = Var2, fill = Freq)) +
-  geom_tile() +
-  geom_text(aes(label = round(Freq, 2)), size = 3) +
-  scale_fill_gradient2(
-    low = "blue",
-    mid = "white",
-    high = "red",
-    midpoint = 0,
-    limits = c(-1, 1)
-  ) +
-  labs(
-    title = "Correlation Heatmap",
-    x = NULL,
-    y = NULL,
-    fill = "Correlation"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 45, hjust = 1)
-  )
-```
-Poverty (r = 0.52) and unemployment (r = 0.50) have the strongest positive correlations with violent crime, suggesting that communities with higher levels of poverty and unemployment tend to have higher crime rates. On the other hand, median household income (r = -0.42) and education (r = -0.31) have negative correlations, meaning that communities with higher incomes and education levels generally have lower crime rates. Long-term housing vacancy (r = 0.02) shows almost no correlation with violent crime.
-
-We also found that some socioeconomic factors are strongly related to each other. For example, poverty is negatively correlated with income (r = -0.79) but positively correlated with unemployment (r = 0.78). This could lead to multicollinearity when we carry out regression analysis, as some variables may be explaining similar patterns in the data.
 ```{r}
 ## Stage 3.4 Correlation bar chart 
 
@@ -314,6 +286,8 @@ ggplot(cor_df,
   theme_minimal()
 
 ```
+Poverty (r = 0.52) and unemployment (r = 0.50) have the strongest positive correlations with violent crime, suggesting that communities with higher levels of poverty and unemployment tend to have higher crime rates. On the other hand, median household income (r = -0.42) and education (r = -0.31) have negative correlations, meaning that communities with higher incomes and education levels generally have lower crime rates. Long-term housing vacancy (r = 0.02) shows almost no correlation with violent crime.
+
 
 
 # Stage4 Modeling Data
@@ -381,3 +355,55 @@ The residuals become more spread out at higher fitted values, suggesting that th
 
 ### 4.4 Limitations and Possible Improvements
 The residual plot suggests that the constant-variance assumption may not hold equally well across the range of fitted values. A future analysis could investigate whether a different model specification improves this pattern. Since the data describe communities rather than individuals, the results should not be used to make claims about individual people or to label particular communities. The analysis identifies associations and does not establish causation.
+
+### 4.5 predictive Modeling 
+
+```{r split-data}
+set.seed(1234)
+crime_split <- initial_split(crime_selected)
+crime_train <- training(crime_split)
+crime_test  <- testing(crime_split)
+```
+```{r}
+crime_rec_2 <- recipe(
+  ViolentCrime ~ Poverty + MedianHouseholdIncome +
+    Unemployment + Education + LongTermVacancy,
+  data = crime_selected) %>%
+  step_dummy(all_nominal_predictors())
+```
+
+```{r}
+crime_mod_1 <- linear_reg() %>%
+  set_engine("lm")
+```
+```{r}
+crime_wflow_1 <- workflow() %>%
+  add_recipe(crime_rec_1) %>%
+  add_model(crime_mod_1)
+```
+
+```{r}
+crime_fit_1 <- fit(crime_wflow_1, data = crime_selected)
+```
+
+```{r}
+crime_predictions_1 <- predict(
+  crime_fit_1,
+  new_data = crime_test
+  ) %>%
+  bind_cols(crime_test %>% select(ViolentCrime))
+```
+```{r}
+crime_metrics_1 <- crime_predictions_1 %>%
+  metrics(truth = ViolentCrime,
+          estimate = .pred)
+crime_metrics_1
+```
+
+
+
+
+
+
+
+
