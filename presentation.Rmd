@@ -1,7 +1,7 @@
 ---
-title: "Presentation title"
-subtitle: "Presentation subtitle (if any)"
-author: "Team name <br> Names of team members"
+title: "Socioeconomic Factors and Violent Crime in US Communities"
+subtitle: "An Exploratory and Regression Analysis"
+author: "Team YIS <br> Yuening Yin, Isabella Lam, Serena Tam"
 institute: "University of Edinburgh"
 date: "`r Sys.Date()`"
 output:
@@ -24,24 +24,58 @@ install.packages('xaringan')
 ```
 
 
-```{r load-packages, include = FALSE}
-# Add any additional packages you need to this chunk
+
+```{r load-packages, include=FALSE}
 library(tidyverse)
 library(tidymodels)
 library(palmerpenguins)
 library(knitr)
 library(xaringanthemer)
 ```
+```{r load-data, include=FALSE}
+crime_data <- read.csv(
+  "data/communities.data",
+  header = FALSE,
+  na.strings = "?",
+  stringsAsFactors = FALSE
+)
+
+name_lines <- readLines("data/communities.names")
+attribute_lines <- grep("@attribute", name_lines, value = TRUE)
+
+variable_names <- sub("@attribute ", "", attribute_lines)
+variable_names <- sub(" .*", "", variable_names)
+
+colnames(crime_data) <- variable_names
+
+crime_selected <- crime_data %>%
+  select(
+    communityname,
+    ViolentCrimesPerPop,
+    PctPopUnderPov,
+    medIncome,
+    PctUnemployed,
+    PctBSorMore,
+    PctVacMore6Mos
+  )
+
+colnames(crime_selected) <- c(
+  "Community",
+  "ViolentCrime",
+  "Poverty",
+  "MedianHouseholdIncome",
+  "Unemployment",
+  "Education",
+  "LongTermVacancy"
+)
+```
+
 
 ```{r setup, include=FALSE}
 # For better figure resolution
 knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618, out.width = "80%")
 ```
 
-```{r load-data, include=FALSE}
-# Load your data here
-
-```
 
 ```{r include=FALSE}
 
@@ -51,29 +85,81 @@ style_xaringan(
 )
 ```
 
-class: center, middle
 
-## A statement of the overall goal / research question
+class: middle
 
----
+## Our Research Question
 
-class: inverse, center, middle
-
-# Section title
+How are socioeconomic factors associated with violent crime rates across US communities?
 
 ---
 
-# Hello World
+class: middle
 
-- Click the `Knit` button to compile your presentation
+# Data Selection
 
-- Make sure to commit and push all resulting files to your GitHub repo
+.pull-left[
+### Our Dataset
+
+- UCI Communities and Crime
+- 1,994 communities across the US
+- 128 original variables
+- Historical data from the 1990s
+]
+
+.pull-right[
+### What Does It Contain
+- Demographic characteristics
+- Socioeconomic conditions
+- Housing information
+- Violent crime rates
+]
+
+The variety of variables gave us several possible directions to explore before narrowing our investigation.
+---
+
+# Variable Selection and Data Preparation
+
+.pull-left[
+### Selected Variables
+
+**Response variable:**
+- Violent crime rate
+
+**Explanatory variables:**
+- Poverty 
+- Unemployment
+- Median household income
+- Education
+- Long-term housing vacancy
+]
+
+.pull-right[
+### Data Preparation
+
+- Selected 5 socioeconomic predictors
+- Checked for missing values
+- No missing values in the selected variables
+- Retained all 1,994 communities
+]
 
 ---
 
-class: inverse, middle, center
+# Exploratory Data Analysis
 
-# Using xaringan
+### Distribution of Violent Crime Rates
+
+```{r crime-histogram, echo=FALSE, warning = FALSE, fig.width=7, fig.height=2.5, out.width="65%" }
+ggplot(data = crime_selected,
+       mapping = aes(x = ViolentCrime)) + 
+  geom_histogram(binwidth = 0.05) +
+  labs(
+    x = "Normalised violent crime rate",
+    y = "Number of communities"
+  )
+```
+
+**Key finding:** The distribution is positively skewed, with most communities having relatively low violent crime rates.
 
 ---
 
