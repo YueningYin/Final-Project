@@ -68,6 +68,47 @@ colnames(crime_selected) <- c(
   "Education",
   "LongTermVacancy"
 )
+
+eda_data <- crime_selected %>%
+  select(-Community)
+
+cor_matrix <- cor(
+  eda_data,
+  use = "pairwise.complete.obs",
+  method = "pearson"
+)
+# Extract correlations with violent crime
+crime_correlations <- cor_matrix["ViolentCrime", ]
+
+# Remove violent crime's correlation with itself
+crime_correlations <- crime_correlations[
+  names(crime_correlations) != "ViolentCrime"
+]
+
+# Convert into a data frame
+cor_df <- data.frame(
+  Variable = names(crime_correlations),
+  Correlation = as.numeric(crime_correlations)
+)
+
+# Create bar chart
+ggplot(cor_df,
+       aes(x = reorder(Variable, -Correlation),
+           y = Correlation)) +
+  geom_col(fill = "#F28DBB", width = 0.7) +
+  geom_text(
+    aes(label = sprintf("%.2f", Correlation)),
+    vjust = ifelse(cor_df$Correlation >= 0, -0.5, 1.5),
+    size = 4
+  ) +
+  geom_hline(yintercept = 0, colour = "grey40") +
+  scale_y_continuous(limits = c(-0.6, 0.65)) +
+  labs(
+    title = "Correlation with Violent Crime",
+    x = NULL,
+    y = "Pearson Correlation Coefficient"
+  ) +
+  theme_minimal()
 ```
 
 
@@ -88,7 +129,7 @@ style_xaringan(
 
 class: middle
 
-## Our Research Question
+## 1. Our Research Question
 
 How are socioeconomic factors associated with violent crime rates across US communities?
 
@@ -96,7 +137,7 @@ How are socioeconomic factors associated with violent crime rates across US comm
 
 class: middle
 
-# Data Selection
+# 2. Data Selection
 
 .pull-left[
 ### Our Dataset
@@ -118,7 +159,7 @@ class: middle
 The variety of variables gave us several possible directions to explore before narrowing our investigation.
 ---
 
-# Variable Selection and Data Preparation
+# 3. Variable Selection and Data Preparation
 
 .pull-left[
 ### Selected Variables
@@ -133,23 +174,25 @@ The variety of variables gave us several possible directions to explore before n
 - Education
 - Long-term housing vacancy
 ]
-
 .pull-right[
 ### Data Preparation
 
 - Selected 5 socioeconomic predictors
+- Renamed relevant variables to improve readability
 - Checked for missing values
-- No missing values in the selected variables
+- No missing values were identified in the selected variables
 - Retained all 1,994 communities
 ]
 
+
+We chose these variables as they represent different aspects of socioeconomic conditions, including economic disadvantage, education and housing. They allow us to explore whether these characteristics are associated with differences in violent crime rates.
 ---
 
-# Exploratory Data Analysis
+# 4. Exploratory Data Analysis
 
-### Distribution of Violent Crime Rates
+#### Distribution of Violent Crime Rates
 
-```{r crime-histogram, echo=FALSE, warning = FALSE, fig.width=7, fig.height=2.5, out.width="65%" }
+```{r crime-histogram, echo=FALSE, warning = FALSE, fig.width=7, fig.height=2.5, out.width="50%" }
 ggplot(data = crime_selected,
        mapping = aes(x = ViolentCrime)) + 
   geom_histogram(binwidth = 0.05) +
@@ -159,144 +202,134 @@ ggplot(data = crime_selected,
   )
 ```
 
-**Key finding:** The distribution is positively skewed, with most communities having relatively low violent crime rates.
+**Key finding:** The distribution of normalised violent crime rates is positively skewed. Most communities have relatively low recorded violent crime rates. A smaller number of communities have substantially higher values.The variation in violent crime rates across communities provides a reason to investigate whether socioeconomic characteristics are associated with these differences.
 
 ---
+# 5. Correlation Analysis
+```{r correlation-chart, echo=FALSE, warning=FALSE, fig.width=7, fig.height=1.5, out.width="60%"}
+ggplot(cor_df,
+       aes(x = reorder(Variable, -Correlation),
+           y = Correlation)) +
+  geom_col(fill = "#F28DBB", width = 0.7) +
+  geom_text(
+    aes(label = sprintf("%.2f", Correlation)),
+    vjust = ifelse(cor_df$Correlation >= 0, -0.5, 1.5),
+    size = 4
+  ) +
+  geom_hline(yintercept = 0, colour = "grey40") +
+  scale_y_continuous(limits = c(-0.6, 0.65)) +
+  labs(
+    title = "Correlation with Violent Crime",
+    x = NULL,
+    y = "Pearson Correlation Coefficient"
+  ) +
+  theme_minimal()
 
-# xaringan
-
-- The presentation is created using the `xaringan` package
-
-- Use `---` to separate slides and `--` for incremental builds
-
---
-
-- Like this
-
----
-
-# Layouts
-
-You can use plain text
-
-- or bullet points
-
-.pull-left[
-or text in two columns $^*$
-]
-.pull-right[
-- like
-- this
-]
-
-.footnote[
-[*] And add footnotes
-]
-
----
-
-# Code
-
-```{r boring-regression}
-# a boring regression
-model <- lm(dist ~ speed, data = cars)
-tidy(model)
-glance(model)
 ```
 
+**Key finding:** Poverty (r = 0.52) and unemployment (r = 0.50) have the strongest positive correlations with violent crime.Median household income (r = −0.42) and education (r = −0.31) show negative correlations. Long-term housing vacancy (r = 0.02) has almost no linear correlation with violent crime.
 ---
+# 6. Multiple Linear Regression
 
-# Plots
-
-```{r recode-species, echo = FALSE}
-# In this chunk I'm doing a bunch of analysis that I don't want to present 
-# in my slides. But I need the resulting data frame for a plot I want to present.
-iris_modified <- iris %>%
-  mutate(Species = fct_other(Species, keep = "setosa"))
-```
-
-```{r plot-iris, echo = FALSE}
-# Code hidden with echo = FALSE
-# Uses modified iris dataset from previous chunk
-# Play around with height and width until you're happy with the look
-ggplot(data = iris_modified, mapping = aes(x = Sepal.Width, y = Sepal.Length, color = Species)) +
-  geom_point() + 
-  theme_minimal() # theme options: https://ggplot2.tidyverse.org/reference/ggtheme.html
-```
-
----
-
-## Plot and text
-
-.pull-left[
-- Some text
-- goes here
+### Why this model?
+- Violent crime is a continuous outcome
+- We want to examine several socioeconomic variables simultaneously
+- Regression allows us to estimate adjusted associations
 ]
-.pull-right[
-```{r warning=FALSE, out.width="100%", fig.width=4, echo=FALSE}
-# see how I changed out.width and fig.width from defaults
-# to make the figure bigger
-ggplot(penguins, aes(x = bill_length_mm, y = species, color = species)) +
-  geom_boxplot() +
+
+---
+
+# 7. Multiple Linear Regression Results
+
+```{r regression-results, echo=FALSE, warning=FALSE}
+final_model <- lm(
+  ViolentCrime ~ Poverty + MedianHouseholdIncome +
+    Unemployment + Education + LongTermVacancy,
+  data = crime_selected
+)
+
+model_summary <- summary(final_model)
+
+knitr::kable(
+  model_summary$coefficients,
+  digits = 3,
+  col.names = c("Estimate", "Std. Error", "t value", "p-value"),
+)
+```
+
+**Key Finding:** Poverty and Unemployment had positive adjusted associations with violent crime, while education and long-term vanacy had negative associations
+
+---
+# 8. Model Evaluation
+
+### How well does our model fit the data?
+
+- **R-squared:** 0.320
+- **Adjusted R-squared:** 0.318
+- **Residual standard error:** 0.192
+
+### Interpretation
+- The model explains approximately **32% of the variation** in violent crime rates
+- The remaining variation is not explained by the 5 predictors in our model
+---
+# 9. Model Diagnostics and Limitations
+```{r residual-plot, echo=FALSE, warning=FALSE, fig.width=7, fig.height=3, out.width="70%"}
+residual_data <- data.frame(
+  Fitted = fitted(final_model),
+  Residuals = residuals(final_model)
+)
+
+ggplot(residual_data, aes(x = Fitted, y = Residuals)) +
+  geom_point(alpha = 0.4, colour = "lightblue") +
+  geom_hline(
+    yintercept = 0,
+    linetype = "dashed",
+    colour = "red"
+  ) +
+  labs(
+    x = "Fitted violent crime rate",
+    y = "Residual"
+  ) +
   theme_minimal()
 ```
-]
+
+**Key finding:** Residuals become more spread out at higher fitted values, suggesting possible non-constant variance
+---
+# 10. Ethical considerations
+
+### Avoiding stigmatisation
+- Associations between poverty and crime should not be used to stereotype disadvantaged communities
+
+### Ecological fallacy
+- Our data describes communities and not individuals
+- Community level relationships cannot be assumed to apply to individual people
+
+### Potential bias in crime data
+- Crime reporting and recording practices may vary between communities
+- The recorded crime rates may not fully represent actual crime
+---
+# 11. Future improvements
+
+### 1. Use more recent data
+- Our dataset contains historical information, mainly from the 1990s
+- Investigate whether present day communities have similar relationships
+
+### Address multicollinearity 
+- Look at methods to handle highly correlated predictors, particularly poverty, unemployment and income
 
 ---
 
-# Tables
+# 12. Conclusion
 
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
+### Key Findings
 
-```{r iris-table, echo = FALSE}
-kable(head(iris), format = "html")
-```
+- **Poverty and unemployment** showed the strongest positive correlations with violent crime.
 
----
+- **Income and education** were negatively correlated with violent crime in our initial analysis.
 
-# Images
+- Our multiple linear regression model explained approximately **32% of the variation** in violent crime rates.
 
-```{r castle, echo = FALSE, out.width = "55%", fig.align = "center", fig.cap = "Image credit: Photo by Jörg Angeli on Unsplash."}
-include_graphics("img/edinburgh-castle.jpg")
-```
+### Overall Conclusion
 
-Or you can also include a full page image. See next slide.
+Socioeconomic factors are associated with violent crime rates across US communities, but these relationships are complex and do not establish causation.
 
----
-
-
-class: inverse, center, middle
-background-image: url(img/edinburgh-castle.jpg)
-background-size: contain
----
-
-# Math Expressions
-
-You can write LaTeX math expressions inside a pair of dollar signs, e.g. &#36;\alpha+\beta$ renders $\alpha+\beta$. You can use the display style with double dollar signs:
-
-```
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-```
-
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-
-Limitations:
-
-1. The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
-
-1. There should not be spaces after the opening `$` or before the closing `$`.
-
-1. Math does not work on the title slide (see [#61](https://github.com/yihui/xaringan/issues/61) for a workaround).
-
----
-
-# Feeling adventurous?
-
-- Want to find out more about `xaringan`? See https://slides.yihui.name/xaringan/#1.
-
-- You are welcome to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
-
-- But some of you might want to play around with slide styling. The 
-`xaringanthemer` provides some solutions for this that: https://pkg.garrickadenbuie.com/xaringanthemer.
-
-- And if you want more bells and whistles, there is also `xaringanExtra`: https://pkg.garrickadenbuie.com/xaringanExtra.
