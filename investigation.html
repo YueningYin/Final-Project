@@ -11,7 +11,7 @@
 
 <meta name="author" content="by YIS:Yuening Yin, Isabella Lam, Serena Tam" />
 
-<meta name="date" content="2026-11-26" />
+<meta name="date" content="2026-11-27" />
 
 <title>IDS investigation worksheet</title>
 
@@ -352,7 +352,7 @@ display: none;
 
 <h1 class="title toc-ignore">IDS investigation worksheet</h1>
 <h4 class="author">by YIS:Yuening Yin, Isabella Lam, Serena Tam</h4>
-<h4 class="date">2026-11-26</h4>
+<h4 class="date">2026-11-27</h4>
 
 </div>
 
@@ -1518,14 +1518,16 @@ standard value is double the size of long-term vacancy’s.</p>
 it shows how strong the statistical evidence is, that a regression
 coefficient is different from zero. Poverty has a large and positive
 t-value,it gives an evident of poverty has a strong and positive
-relationship with violent crime.</p>
-<ul>
-<li>stat: t = estimate/ SE . Large positive t-value → Evidence of a
-positive coefficient. Large negative t-value → Evidence of a negative
-coefficient. t-value close to zero → Little evidence that the
-coefficient differs from zero. -p-value: Less than 0.05, Statistically
-significant; &gt;0.05, NOt</li>
-</ul>
+relationship with violent crime. Long term Vacancy is the largest
+negative coefficient amoug all the other response variable, as it has
+the t-value of -7.15</p>
+<p>The p-value is used to determine whether there is sufficient
+statistical evidence, when the p-value is less than 0.05, then it will
+consider statistically significant. In this report, all the response
+variable that we have chosen are all less then 0.05, it means they are
+all statistically significant. Poverty has the smallest p-value, it
+suggests poverty has a strong statistical evidence against the null
+hypothesis</p>
 <pre class="r"><code>residual_data &lt;- data.frame(
   Fitted = fitted(final_model),
   Residuals = residuals(final_model)
@@ -1588,6 +1590,25 @@ crime_metrics_1</code></pre>
 ## 1 rmse    standard       0.189
 ## 2 rsq     standard       0.349
 ## 3 mae     standard       0.133</code></pre>
+<p>##Analysis of RMSE</p>
+</div>
+<div id="future-improvement" class="section level2">
+<h2>future improvement</h2>
+<p>(suggest further improvements on the model if your first findings are
+not satisfactory enough)</p>
+</div>
+<div id="ethical-concern" class="section level2">
+<h2>Ethical Concern</h2>
+<p>In this report, we can see some of the variables have a positive
+relationship with violent crime. However, the correlation does not imply
+causation. There are many other factors that can be involved but not
+take in account. We cannot guarantee the other variables every case in
+our data is under the same condition. In addition, these data are
+describing a historical context from 1990, it cannot represent the
+relationship of violent crime with all those response variables. A huge
+difference between the 90s and modern day have been made, for example
+there are changes law, increase in life conditions, compulsory education
+etc.</p>
 </div>
 </div>
 
