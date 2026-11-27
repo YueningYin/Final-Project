@@ -305,12 +305,7 @@ final_model <- lm(
 
 model_summary <- summary(final_model)
 
-knitr::kable(
-  model_summary$coefficients,
-  digits = 3,
-  col.names = c("Estimate", "Std. Error", "t value", "p-value"),
-  caption = "Multiple linear regression results"
-)
+
 ```
 Holding the other variables constant, Poverty (β = 0.429, p < 0.001) and Unemployment (β = 0.245, p < 0.001) were positively associated with violent crime. MedianHouseholdIncome also had a positive coefficient (β = 0.118, p = 0.011). Education (β = −0.145, p < 0.001) and LongTermVacancy (β = −0.171, p < 0.001) had negative coefficients. All five predictors were statistically significant at the 5% level. The income coefficient has a different direction from its bivariate association with violent crime. LongTermVacancy also had a near-zero bivariate correlation but a negative coefficient in the full model. These differences suggest that the adjusted coefficients should be interpreted cautiously. The results describe associations, not causal effects.
 
@@ -331,6 +326,21 @@ knitr::kable(
 )
 ```
 The model accounted for approximately 32.0% of the variation in violent crime rates (R² = 0.320; adjusted R² = 0.318). This describes how well the model fits the data used in the analysis; it is not a prediction accuracy score for new communities.
+```{r}
+ crime_evaluate <- linear_reg() %>%
+  set_engine("lm") %>%
+fit(ViolentCrime ~ Poverty + MedianHouseholdIncome +
+    Unemployment + Education + LongTermVacancy,
+  data = crime_selected) %>%
+  tidy()
+```
+The estimate values show us the estimated coefficient of each variable. We can see property, medium household income, and unemployment have a positive relationship to violence crime respectively, if other variables stay constant. However, Education and Long term vacancy do have a negative relationship with violent crime.
+
+Long term vacancy has the lowest value in standard error, it suggests its estimate coefficient is the most precise, it implies that is the most reliable result compared to other variables. Medium household income has the greatest number of standard error, its estimate coefficient is the least compared to other selected variables, its standard value is double the size of long-term vacancy’s.
+
+Statistic is calculated by the formula t = estimate/ standard error, it shows how strong the statistical evidence is, that a regression coefficient is different from zero. Poverty has a large and positive t-value,it gives an evident of poverty has a strong and positive relationship with violent crime. Long term Vacancy is the largest negative coefficient amoug all the other response variable, as it has the t-value of -7.15 
+
+The p-value is used to determine whether there is sufficient statistical evidence, when the p-value is less than 0.05, then it will consider statistically significant. In this report, all the response variable that we have chosen are all less then 0.05, it means they are all statistically significant. Poverty has the smallest p-value, it suggests poverty has a strong statistical evidence against the null hypothesis
 
 ```{r}
 residual_data <- data.frame(
@@ -365,7 +375,7 @@ crime_train <- training(crime_split)
 crime_test  <- testing(crime_split)
 ```
 ```{r}
-crime_rec_2 <- recipe(
+crime_rec_1 <- recipe(
   ViolentCrime ~ Poverty + MedianHouseholdIncome +
     Unemployment + Education + LongTermVacancy,
   data = crime_selected) %>%
@@ -376,6 +386,7 @@ crime_rec_2 <- recipe(
 crime_mod_1 <- linear_reg() %>%
   set_engine("lm")
 ```
+
 ```{r}
 crime_wflow_1 <- workflow() %>%
   add_recipe(crime_rec_1) %>%
@@ -399,11 +410,12 @@ crime_metrics_1 <- crime_predictions_1 %>%
           estimate = .pred)
 crime_metrics_1
 ```
+##Analysis of RMSE
 
+## future improvement 
+(suggest further improvements on the model if your first findings are not satisfactory enough)
 
+## Ethical Concern
 
-
-
-
-
+In this report, we can see some of the variables have a positive relationship with violent crime. However, the correlation does not imply causation. There are many other factors that can be involved but not take in account. We cannot guarantee the other variables every case in our data is under the same condition. In addition, these data are describing a historical context from 1990, it cannot represent the relationship of violent crime with all those response variables. A huge difference between the 90s and modern day have been made, for example there are changes law, increase in life conditions, compulsory education etc.
 
