@@ -40,8 +40,10 @@ length(variable_names)
 colnames(crime_data) <- variable_names
 ```
 
+
+# Stage1 Modeling Data
+### Stage1.1  Dataset Structure
 ```{r}
-## Stage1.1  Dataset Structure
 # Overall dimensions
 dim(crime_data)
 
